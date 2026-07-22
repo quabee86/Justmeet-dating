@@ -1,0 +1,6 @@
+{
+  "name": "JustMeet Dating",
+  "description": "A premium full-stack dating platform featuring swipe matchmaking, custom search filters, interactive AI-powered conversations, a verification webcam selfie capture flow, profile visitor logs, and a premium checkout simulation.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

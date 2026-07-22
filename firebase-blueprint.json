@@ -1,0 +1,137 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile details of a registered JustMeet user",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "age": { "type": "integer" },
+        "gender": { "type": "string" },
+        "bio": { "type": "string" },
+        "location": { "type": "string" },
+        "occupation": { "type": "string" },
+        "interests": { "type": "array" },
+        "photoUrl": { "type": "string" },
+        "isVerified": { "type": "boolean" },
+        "premiumStatus": { "type": "string" },
+        "lookingFor": { "type": "string" },
+        "ageRangeMin": { "type": "integer" },
+        "ageRangeMax": { "type": "integer" },
+        "religion": { "type": "string" },
+        "education": { "type": "string" },
+        "languages": { "type": "array" }
+      },
+      "required": ["name", "age", "gender", "bio", "location", "photoUrl"]
+    },
+    "MatchProfile": {
+      "title": "MatchProfile",
+      "description": "Dating match candidate profile details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "age": { "type": "integer" },
+        "gender": { "type": "string" },
+        "bio": { "type": "string" },
+        "location": { "type": "string" },
+        "occupation": { "type": "string" },
+        "interests": { "type": "array" },
+        "photoUrl": { "type": "string" },
+        "isVerified": { "type": "boolean" },
+        "premiumStatus": { "type": "string" },
+        "distance": { "type": "number" },
+        "hasLiked": { "type": "boolean" },
+        "hasPassed": { "type": "boolean" },
+        "isFavorite": { "type": "boolean" },
+        "winkSent": { "type": "boolean" },
+        "isOnline": { "type": "boolean" }
+      },
+      "required": ["id", "name", "age", "gender", "photoUrl", "distance"]
+    },
+    "Chat": {
+      "title": "Chat",
+      "description": "A conversation between two users",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "matchProfile": { "$ref": "MatchProfile" },
+        "messages": { "type": "array" },
+        "lastMessageTimestamp": { "type": "string" },
+        "unreadCount": { "type": "integer" }
+      },
+      "required": ["id", "matchProfile", "messages"]
+    },
+    "AppReport": {
+      "title": "AppReport",
+      "description": "A safety, abuse, or policy violation report",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "accusedId": { "type": "string" },
+        "accusedName": { "type": "string" },
+        "accusedPhoto": { "type": "string" },
+        "reporterName": { "type": "string" },
+        "reason": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "accusedId", "reporterName", "reason", "status"]
+    },
+    "PaymentTransaction": {
+      "title": "PaymentTransaction",
+      "description": "Audit record of premium tier upgrades",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "amount": { "type": "number" },
+        "tier": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "userEmail", "amount", "tier", "status"]
+    },
+    "VerificationRequest": {
+      "title": "VerificationRequest",
+      "description": "Facial selfie biometric verification request",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userPhoto": { "type": "string" },
+        "selfiePhotoUrl": { "type": "string" },
+        "status": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "userId", "selfiePhotoUrl", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile collection by document ID (user email or uid)"
+    },
+    "/profiles/{profileId}": {
+      "schema": "MatchProfile",
+      "description": "All swipeable candidate match profiles"
+    },
+    "/chats/{chatId}": {
+      "schema": "Chat",
+      "description": "Active conversational chats between users"
+    },
+    "/reports/{reportId}": {
+      "schema": "AppReport",
+      "description": "Submitted abuse, safe-space safety, and policy reports"
+    },
+    "/transactions/{transactionId}": {
+      "schema": "PaymentTransaction",
+      "description": "Payment ledger logs"
+    },
+    "/verificationRequests/{requestId}": {
+      "schema": "VerificationRequest",
+      "description": "Active selfie identity verification requests"
+    }
+  }
+}

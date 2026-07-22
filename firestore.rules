@@ -1,0 +1,66 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if the authenticated user's email matches the target document ID
+    function isOwner(userId) {
+      return isAuthenticated() 
+        && request.auth.token != null 
+        && 'email' in request.auth.token 
+        && request.auth.token.email != null 
+        && request.auth.token.email.lower() == userId.lower();
+    }
+
+    // Allow anyone to read the test connection document to verify Firestore status
+    match /test/connection {
+      allow read: if true;
+    }
+
+    // Check if the authenticated user is the designated system administrator
+    function isAdmin() {
+      return isAuthenticated() && request.auth.uid == 'hhrLJgwvxueN5WyQLVZpcmyRlml1';
+    }
+
+    // Each user can only read and write their own profile document and files vault.
+    // The admin user is permitted read-only access to all user profiles and files for audit purposes.
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isOwner(userId);
+
+      match /files/{fileId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isOwner(userId);
+      }
+    }
+
+    // Match candidate profiles - readable/writeable by any authenticated member of the community
+    match /profiles/{profileId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Private chats - accessible by authenticated users
+    match /chats/{chatId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Safety and policy reports - logged in users can read/write reports
+    match /reports/{reportId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Ledger transactions - readable/writeable by authenticated users
+    match /transactions/{transactionId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Selfie identity verification queue - authenticated users can read/write requests
+    match /verificationRequests/{requestId} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}
